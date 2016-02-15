@@ -295,6 +295,7 @@ Int_t Spectrum_Loader::Which_Gate_Mode(const char*Gate)
     if((TString)True_Option=="B_M"){Gate_Mode=7;}//Raw spectra for a given mass
     if((TString)True_Option=="S_S"){Gate_Mode=8;}//you want to sbstract the current spectra by another spectra // to complete
     if((TString)True_Option=="SA"){Gate_Mode=9;}//Simple gate just with AGATA
+    if((TString)True_Option=="PIDM"){Gate_Mode=10;}//Simple gate just with AGATA
 
     //cout<<"Gate_Mode "<<Gate_Mode<<endl;
 
@@ -1185,6 +1186,82 @@ TH1F *Spectrum_Loader::Substract_Two_Spectra(TH1F* Old_Spectra,TH1F* Current_Spe
 
     }
     return New_Return_Spectra;
+}
+
+
+TH2F *Spectrum_Loader::Plot_PID_M(Int_t M_Current,const char *Gate,unsigned int Max_Entries)
+
+{
+
+        TString Tree_Name= Form("%d",M_Current);
+
+        fTree=TFile::Open(Tree_Directory);
+
+        TDirectoryFile *ISOtopes =(TDirectoryFile *)fTree->Get("TreePerM");
+
+        fCurrentTree = (TTree *)ISOtopes->Get(Tree_Name);
+
+        Tree_Name+=" PID vs M =";Tree_Name+=M_Current;
+
+        f2OutputSpectra = new TH2F(Tree_Name,Tree_Name,200,M_Current-0.5,M_Current+0.5,400,25,45);
+
+        //*********Set branch Adress of Tree********************
+
+        Float_t PIDTree=0;
+        Float_t M=0;
+
+        fCurrentTree->SetBranchAddress("PID", &PIDTree);
+        fCurrentTree->SetBranchAddress("M", &M);
+
+
+        //*********END Set branch Adress of Tree********************
+
+
+
+        ULong64_t entries_in_tree = fCurrentTree->GetEntries(), c_in_tree = 0;
+
+         cout<<"\e[1;93m"<<"             ENTRIES IN TREE "<<entries_in_tree<<"\e[0m"<<endl;
+        cout<<endl;
+
+        cout<<"\e[1;93m"<<"                      ProGress                        "<<"\e[0m"<<endl;
+        cout<<endl;
+        cout <<"\e[1;93m"<< "0%   10   20   30   40   50   60   70   80   90 100%"<<"\e[0m"<<endl;
+        cout <<"\e[1;93m"<< "|----|----|----|----|----|----|----|----|----|----| "<<"\e[0m"<<endl;
+
+
+
+        while ( c_in_tree < entries_in_tree )
+        {
+
+            if(c_in_tree%(Int_t)(entries_in_tree/50.)==0)
+            {
+                cout <<"\e[1;93m"<< "*" <<"\e[0m"<<flush;
+            }
+
+            fCurrentTree->GetEntry(c_in_tree);
+
+
+                    f2OutputSpectra->Fill(M,PIDTree);
+
+                if(c_in_tree>Max_Entries)break;
+
+
+                c_in_tree++;
+        }
+
+        cout<<endl;
+
+        f2OutputSpectra->SetName(Form("PID versus M=%d",M_Current));
+        f2OutputSpectra->SetTitle(Form("PID versus M=%d",M_Current));
+
+
+        return f2OutputSpectra;
+
+
+
+
+
+
 }
 
 

@@ -57,6 +57,8 @@ namespace Gw {
 
         TH1F *Substract_Two_Spectra(TH1F* Old_Spectra,TH1F* Current_Spectra,Float_t Coef);
 
+        TH2F *Plot_PID_M(Int_t M_Current,const char *Gate,unsigned int Max_Entries);
+
 
 
         ClassDef(Spectrum_Loader,1)

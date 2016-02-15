@@ -124,11 +124,10 @@ void Cube_Player::XEventAction(Int_t event, Int_t px, Int_t py, TObject */*sel*/
                 InfoMessage("      h->Show Help");cout<<endl;
                 ErrorMessage("      CTRL+ h->Show Special Help for Gated Spectra");cout<<endl;
                 InfoMessage("      r->Reset coordinates of the chart");cout<<endl;
-                InfoMessage("      z->Increase by one proton");cout<<endl;
-                InfoMessage("      s->Decrease by one proton");cout<<endl;
+                InfoMessage("      z->Change neutron by proton");cout<<endl;
+                InfoMessage("      s->Change proton by neutron");cout<<endl;
                 InfoMessage("      d->Increase by one neutron");cout<<endl;
                 InfoMessage("      q->Increase by one neutron");cout<<endl;
-                InfoMessage("      Pave_Num_Enter->Show Spectrum of the selected nucleus");cout<<endl;
                 InfoMessage("      Ctrl+a -> Draw All Nuclei");cout<<endl;
                 InfoMessage("      Ctrl+r -> Reset Drawing");cout<<endl;
                 ErrorMessage("-------------------------------------------------------------------");cout<<endl;
@@ -231,6 +230,7 @@ void Cube_Player::XEventAction(Int_t event, Int_t px, Int_t py, TObject */*sel*/
         InfoMessage("      E_M-> Plot E versus M Matrix with current Z between Current M-3 and Current M+3");cout<<endl;
         cout<<endl;
         ErrorMessage("      HELP ON OPTIONS TO PLOT RAW SPECTRA");cout<<endl;
+        InfoMessage("      PIDM-> Plot PID versus M for the current Mass");cout<<endl;
         InfoMessage("      B_M-> Plot Raw Spectra with the current mass");cout<<endl;
         InfoMessage("      Options are :");cout<<endl;
         InfoMessage("      B_M->Raw Spectra with all the availaible PIDs");cout<<endl;
@@ -323,52 +323,52 @@ void Cube_Player::Draw_Rect_AND_Name_Z(Bool_t Mode)
                   switch (x) {
 
                   case 0:
-                      Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                      Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
 
                   case 1:
-                      Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                      Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
                   case 2:
-                      Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                      Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
 
                   case 3:
-                      Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                      Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
                   case 4:
-                      Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                      Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
                   case 5:
-                      Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                      Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
 
                   case 6:
-                      Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                      Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
 
                   case 7:
-                      Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                      Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
                   case 8:
-                      Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                      Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
 
                   case 9:
-                      Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                      Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
                   case 10:
-                      Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                      Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
 
                   case 11:
-                      Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                      Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
 
                   case 12:
-                      Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                      Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
                   case 13:
-                      Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                      Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
 
                   case 14:
-                      Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                      Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
                   case 15:
-                      Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                      Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
 
                   case 16:
-                      Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                      Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
                   case 17:
-                      Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                      Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
                   case 18:
-                      Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                      Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
 
 
                   }
@@ -393,53 +393,53 @@ void Cube_Player::Draw_Rect_AND_Name_A(Bool_t Mode)
                  switch (x) {
 
                  case 0:
-                     Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                     Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
 
                  case 1:
-                     Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                     Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
                  case 2:
-                     Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                     Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
 
                  case 3:
-                     Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                     Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
                  case 4:
-                     Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                     Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
 
                  case 5:
-                     Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                     Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
 
                  case 6:
-                     Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                     Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
 
                  case 7:
-                     Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                     Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
                  case 8:
-                     Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                     Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
 
                  case 9:
-                     Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                     Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
                  case 10:
-                     Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                     Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
 
                  case 11:
-                     Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                     Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
 
                  case 12:
-                     Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                     Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
                  case 13:
-                     Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                     Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
 
                  case 14:
-                     Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                     Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
                  case 15:
-                     Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                     Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
 
                  case 16:
-                     Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                     Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
                  case 17:
-                     Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                     Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
                  case 18:
-                     Tl.DrawLatex(A_Offset+y,Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
+                     Tl.DrawLatex(A_Offset+y-(Z_Offset+x),Z_Offset+x,ReturnZWithALatex(x,A_Offset+y));   break;
 
                  }
 
@@ -667,6 +667,10 @@ void Cube_Player::Plot_Current_Spectra(Int_t z,Int_t a,const char *OPTION,const 
         {
              Current_Spectra=g->Plot_All_Gated_Spectra(Gate,Gate_W,Max_Entries);
              Scale=Current_Spectra->GetMaximum();
+        }
+        if(g->Which_Gate_Mode(Gate)==10)//PID vs M Mode
+        {
+             Current_Matrix=g->Plot_PID_M(a+A_Offset,Gate,Max_Entries);
         }
         if(g->Which_Gate_Mode(Gate)==8)//this means substract spectra //TO COMPLETE
         {
@@ -1197,11 +1201,11 @@ void Cube_Player::Display_All_Nuclei()
 {
     Tl.SetTextFont(43); Tl.SetTextSize(13);
 
-    for(Int_t i=0;i<=18;i++)
+    for(Int_t i=1;i<=18;i++)
     {
-        for(Int_t j=-5;j<=36;j++)
+        for(Int_t j=-4;j<=35;j++)
         {
-            if((Z_Offset+i)<=(0.4*(A_Offset+j)+4) && (i+Z_Offset)>=(0.4*(A_Offset+j)-3))Tl.DrawLatex(A_Offset+j,Z_Offset+i,ReturnZWithALatex(i,A_Offset+j));
+            if((Z_Offset+i)<=(0.4*(A_Offset+j)+4) && (i+Z_Offset)>=(0.4*(A_Offset+j)-3))Tl.DrawLatex((A_Offset+j)-(Z_Offset+i),Z_Offset+i,ReturnZWithALatex(i,A_Offset+j));
 
         }
     }
