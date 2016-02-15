@@ -12,7 +12,7 @@ source /data/users/soft/scripts/LoadGw.sh
 chmod +x Cubix.txt
 chmod 777 Cubix.txt
 
-cd /agataDAS1/AGATA/Experiments/e680/Analysis/Users/Gui/Calibrations/ROOT_CUBE
+cd /agataDAS1/AGATA/Experiments/e680/Analysis/Users/Gui/Calibrations/ROOT_CUBE/Cubix_Software
 
 
 root -l  Load.cxx StartTools.C
