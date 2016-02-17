@@ -147,6 +147,57 @@ Double_t *Get_Back_IDS(const char*Quality_Factor)
     return QF;
 }
 
+Double_t *Get_Back_IDS_S_P(const char*Quality_Factor)
+{
+
+    Double_t * QF = new Double_t [4];
+    QF[0]=0.5;QF[1]=0.5;QF[2]=0.5;QF[3]=0.5;//Default values
+
+
+    TString Delimiter=" ";
+    TString CompareOption=TString(Quality_Factor);
+
+    TObjArray *d = CompareOption.Tokenize(Delimiter);
+
+    if(d->GetEntries()>1)
+    {
+        TString SecondOption = d->At(1)->GetName();
+
+        delete d;
+
+        //Get Back QF for Z_ID And M_ID
+
+        Delimiter="/";
+        TString CompareOption_Spectra=TString(SecondOption);
+        TObjArray *d_Spectra = CompareOption_Spectra.Tokenize(Delimiter);
+
+        Delimiter="+";
+
+        Int_t k=0;
+        for(Int_t i=0;i<d_Spectra->GetEntries();i++)
+        {
+
+            TString SecondOption_Spectra_i = d_Spectra->At(i)->GetName();
+            TString CompareOption_Spectra=TString(SecondOption_Spectra_i);
+            TObjArray *d_Spectra_i = CompareOption_Spectra.Tokenize(Delimiter);
+            for(Int_t j=0;j<d_Spectra_i->GetEntries();j++)
+            {
+
+                QF[k]=atof(d_Spectra_i->At(j)->GetName());
+                //cout<<"QF["<<k<<"]  "<<atof(d_Spectra_i->At(j)->GetName())<<endl;
+            k++;
+            }
+
+
+        }
+
+
+    }
+
+    return QF;
+}
+
+
 
 
 Float_vec_t Get_Back_Gates(const char*Gate)
@@ -295,7 +346,8 @@ Int_t Spectrum_Loader::Which_Gate_Mode(const char*Gate)
     if((TString)True_Option=="B_M"){Gate_Mode=7;}//Raw spectra for a given mass
     if((TString)True_Option=="S_S"){Gate_Mode=8;}//you want to sbstract the current spectra by another spectra // to complete
     if((TString)True_Option=="SA"){Gate_Mode=9;}//Simple gate just with AGATA
-    if((TString)True_Option=="PIDM"){Gate_Mode=10;}//Simple gate just with AGATA
+    if((TString)True_Option=="PIDM"){Gate_Mode=10;}//PID versus M Mode (Matrix mode)
+     if((TString)True_Option=="S_P"){Gate_Mode=11;}//Search polluant Mode
 
     //cout<<"Gate_Mode "<<Gate_Mode<<endl;
 
@@ -668,8 +720,9 @@ TH1F *Spectrum_Loader::Plot_Double_Gated_Spectra(Int_t Zz,Int_t M,const char * I
 
     fCurrentTree = (TTree *)ISOtopes->Get(Tree_Name);
 
-    Tree_Name+="_Gate_";Tree_Name+=Gate;
-    Tree_Name+=" M_ID =";Tree_Name+=QF[0];
+    TString Spec_Name1 =Tree_Name;
+    Spec_Name1 +=Gate;
+    Spec_Name1 += Form("M_ID = %4.2f",QF[0]);
 
     ffOutputSpectra = new TH1F(Tree_Name,Tree_Name,2000,0,2000);
 
@@ -816,9 +869,10 @@ TH2F *Spectrum_Loader::Plot_E_Z(Int_t Zz,Int_t M,const char * ID_R,Float_t Z_Min
 
     fCurrentTree = (TTree *)ISOtopes->Get(Tree_Name);
 
-    Tree_Name+=" M_ID =";Tree_Name+=QF[0];
+    TString Spec_Name1 =Tree_Name;
+    Spec_Name1 += Form("M_ID = %4.2f",QF[0]);
 
-    f2OutputSpectra = new TH2F(Tree_Name,Tree_Name,Int_t(Z_Max-Z_Min)*40,Z_Min,Z_Max,2000,0,2000);
+    f2OutputSpectra = new TH2F(Spec_Name1,Spec_Name1,Int_t(Z_Max-Z_Min)*40,Z_Min,Z_Max,2000,0,2000);
 
 
     //*********Set branch Adress of Tree********************
@@ -899,9 +953,10 @@ TH2F *Spectrum_Loader::Plot_E_M(Int_t Zz,Int_t M,const char * ID_R,Float_t M_Min
 
     fCurrentTree = (TTree *)ISOtopes->Get(Tree_Name);
 
-    Tree_Name+=" Z_ID =";Tree_Name+=QF[0];
+    TString Spec_Name1 =Tree_Name;
+    Spec_Name1 += Form("Z_ID = %4.2f",QF[0]);
 
-    f2OutputSpectra = new TH2F(Tree_Name,Tree_Name,Int_t(M_Max-M_Min)*100,M_Min,M_Max,2000,0,2000);
+    f2OutputSpectra = new TH2F(Spec_Name1,Spec_Name1,Int_t(M_Max-M_Min)*100,M_Min,M_Max,2000,0,2000);
 
 
     //*********Set branch Adress of Tree********************
@@ -986,7 +1041,10 @@ TH1F *Spectrum_Loader::Plot_B_M(Int_t Zz,Int_t M,const char * PID,ULong64_t Max_
 
     Tree_Name+=" PID =";Tree_Name+=PIDIn[0];
 
-    ffOutputSpectra = new TH1F(Tree_Name,Tree_Name,2000,0,2000);
+    TString Spec_Name1 =Tree_Name;
+    Spec_Name1 += Form("PID = %4.2f ",PIDIn[0]);
+
+    ffOutputSpectra = new TH1F(Spec_Name1,Spec_Name1,2000,0,2000);
 
     //*********Set branch Adress of Tree********************
 
@@ -1262,6 +1320,128 @@ TH2F *Spectrum_Loader::Plot_PID_M(Int_t M_Current,const char *Gate,unsigned int 
 
 
 
+}
+
+
+TObjArray *Spectrum_Loader::Search_Polluants(Int_t Zz,Int_t M,const char * ID_R,ULong64_t Max_Read_Entries)
+{
+
+    TString ZString= Form("Z=%d",Zz);
+    TString S_z=Z[Zz-Z_Offset];
+
+    Array_Of_Spectra= new TObjArray();
+
+    //get back the four quality factors
+    //(QF[0] pour Z_ID et QF[1] pour M_ID)//first spectra
+    //(QF[2] pour Z_ID et QF[3] pour M_ID)//second spectra
+    Double_t *QF = new Double_t[4];
+    QF=Get_Back_IDS_S_P(ID_R);
+
+//    cout<<" QF 0 "<<QF[0]<<" QF 1 "<<QF[1]<<endl;
+
+//    cout<<" QF 2 "<<QF[2]<<" QF 3 "<<QF[3]<<endl;
+
+
+    TString Tree_Name="";Tree_Name+=M;Tree_Name+=S_z;Tree_Name+="_Z_";Tree_Name+=Zz;Tree_Name+="_A";Tree_Name+=M;
+
+    fTree=TFile::Open(Tree_Directory);
+
+    TDirectoryFile *ISOtopes =(TDirectoryFile *)fTree->Get("TreePerIsotope");
+
+
+    TDirectoryFile *Z_Folder =(TDirectoryFile *)ISOtopes->Get(ZString);
+
+
+    fCurrentTree = (TTree *)Z_Folder->Get(Tree_Name);
+
+    // fCurrentTree->Print();
+
+    TString Spec_Name1 =Tree_Name;
+    Spec_Name1 += Form("Z_ID = %4.2f, M_ID = %4.2f",QF[0],QF[1]);
+
+    TString Spec_Name2 =Tree_Name;
+    Spec_Name2 += Form("Z_ID = %4.2f, M_ID = %4.2f",QF[2],QF[3]);
+
+
+    ffOutputSpectra = new TH1F(Spec_Name1,Spec_Name1,2000,0,2000);
+    f_2OutputSpectra = new TH1F(Spec_Name2,Spec_Name2,2000,0,2000);
+
+    ffOutputSpectra->SetLineColor(kRed);
+    f_2OutputSpectra->SetLineColor(kBlue);
+
+    //*********Set branch Adress of Tree********************
+
+    Float_t EGamma[20]={0};
+    Float_t Z_ID=0;
+    Float_t M_ID=0;
+    Byte_t MGamma;
+
+    fCurrentTree->SetBranchAddress("MGamma", &MGamma);
+    fCurrentTree->SetBranchAddress("EGamma", EGamma);
+    fCurrentTree->SetBranchAddress("Z_ID", &Z_ID);
+    fCurrentTree->SetBranchAddress("M_ID", &M_ID);
+
+
+
+    //*********Set branch Adress of Tree********************
+
+
+    ULong64_t entries_in_tree = fCurrentTree->GetEntries(), c_in_tree = 0;
+
+    cout<<"\e[1;93m"<<"             ENTRIES IN TREE "<<entries_in_tree<<"\e[0m"<<endl;
+    cout<<endl;
+
+    cout<<"\e[1;93m"<<"                      ProGress                        "<<"\e[0m"<<endl;
+    cout<<endl;
+    cout <<"\e[1;93m"<< "0%   10   20   30   40   50   60   70   80   90 100%"<<"\e[0m"<<endl;
+    cout <<"\e[1;93m"<< "|----|----|----|----|----|----|----|----|----|----| "<<"\e[0m"<<endl;
+
+
+
+    while ( c_in_tree < entries_in_tree )
+    {
+
+
+        if(c_in_tree%(Int_t)(entries_in_tree/50.)==0)
+        {
+            cout <<"\e[1;93m"<< "*" <<"\e[0m"<< flush;
+        }
+
+
+        fCurrentTree->GetEntry(c_in_tree);
+        if(Z_ID<QF[0] && M_ID< QF[1])
+        {
+            for (Int_t i =0; i<MGamma; i++)
+            {
+                ffOutputSpectra->Fill(EGamma[i]);
+            }
+        }
+
+        if(Z_ID<QF[2] && M_ID< QF[3])
+        {
+            for (Int_t i =0; i<MGamma; i++)
+            {
+                f_2OutputSpectra->Fill(EGamma[i]);
+            }
+        }
+
+        if(c_in_tree>Max_Read_Entries)break;
+        c_in_tree++;
+    }
+
+
+    Double_t norm = 1;
+    Double_t scale = norm/(ffOutputSpectra->Integral());
+    ffOutputSpectra->Scale(scale);
+
+    Double_t scale2 = norm/(f_2OutputSpectra->Integral());
+    f_2OutputSpectra->Scale(scale2);
+
+    Array_Of_Spectra->Add(ffOutputSpectra);
+    Array_Of_Spectra->Add(f_2OutputSpectra);
+
+    return Array_Of_Spectra;
+    cout<<endl;
 }
 
 

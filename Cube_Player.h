@@ -22,6 +22,8 @@ namespace Gw {
         Int_t fLastMouseX;              // last x mouse position
         Int_t fLastMouseY;              // last y mouse position
         TH1F *Current_Spectra;
+        TH1F *Current_Second_Spectra; //second spectra when Search polluant is active
+        TObjArray *Current_Array;
 
     protected:
 

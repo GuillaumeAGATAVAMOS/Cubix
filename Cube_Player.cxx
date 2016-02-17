@@ -118,7 +118,7 @@ void Cube_Player::XEventAction(Int_t event, Int_t px, Int_t py, TObject */*sel*/
                 cout<<endl;
                 cout<<endl;
                 WarningMessage("*********************************************************************************************");cout<<endl;
-                WarningMessage("***************************HELP AND PROGRAM Last UPDATE : 12/06/2016*************************");cout<<endl;
+                WarningMessage("***************************HELP AND PROGRAM Last UPDATE : 17/06/2016 16h32*************************");cout<<endl;
                 WarningMessage("*********************************************************************************************");cout<<endl;
                 InfoMessage("HELP : Keys used to interact with nucleide chart:");cout<<endl;
                 InfoMessage("      h->Show Help");cout<<endl;
@@ -242,6 +242,16 @@ void Cube_Player::XEventAction(Int_t event, Int_t px, Int_t py, TObject */*sel*/
         InfoMessage("      S_S X N 0->Add to the Current Spectra another Spectra Corrected by factor X");cout<<endl;
         InfoMessage("      S_S -X SI 369+542->Substract to the Current Spectra the Gated Spectra of the current Nuclei Gated on 369+542");cout<<endl;
         InfoMessage("      S_S -X DM 369+542/586->Substract to the Current Spectra the Double_Gated Spectra of the current Nuclei ");cout<<endl;
+        cout<<endl;
+        ErrorMessage("      HELP ON OPTIONS TO SEARCH FOR CONTAMINANTS");cout<<endl;
+        InfoMessage("      S_P-> KeyWord To search for contaminants");cout<<endl;
+        InfoMessage("      Options are :");cout<<endl;
+        InfoMessage("      S_P W+X/Y+Z -> W and X are Z_ID and M_ID for the fisrt Spectrum; Y and Z are Z_ID and M_ID for the second Spectrum");cout<<endl;
+        InfoMessage("      Accepted forms : 'S_P 0.5+0.5/0.321+0.321'");
+        InfoMessage("      Accepted forms : 'S_P 0.321+0.321'  -> The second parameters are taken from the default values of M_ID and Z_ID");
+        InfoMessage("      Default Values : 'Z_ID=M_ID=0.5'");
+
+
 
     }
     if   (Key == kKey_r  && CTRL==false && LastCTRL==true)//CTRL+r
@@ -628,7 +638,9 @@ void Cube_Player::Plot_Current_Spectra(Int_t z,Int_t a,const char *OPTION,const 
     {
 
         Current_Spectra=0x0;
+        Current_Second_Spectra=0x0;
         Current_Matrix=0x0;
+        Current_Array=0x0;
         Float_t Scale=0;
         if(g->Which_Gate_Mode(Gate)==4)//this means no gate
         {
@@ -672,6 +684,15 @@ void Cube_Player::Plot_Current_Spectra(Int_t z,Int_t a,const char *OPTION,const 
         {
              Current_Matrix=g->Plot_PID_M(a+A_Offset,Gate,Max_Entries);
         }
+        if(g->Which_Gate_Mode(Gate)==11)//Search polluants mode
+        {
+            Current_Array=g->Search_Polluants(Z_Offset+z,a+A_Offset,Gate,Max_Entries);
+            Current_Spectra=(TH1F*)Current_Array->At(0);
+            Current_Second_Spectra=(TH1F*)Current_Array->At(1);
+            Scale=Current_Second_Spectra->GetMaximum();
+        }
+
+
         if(g->Which_Gate_Mode(Gate)==8)//this means substract spectra //TO COMPLETE
         {
            TList *TList_Current_Canvas=new TList();
@@ -756,13 +777,27 @@ void Cube_Player::Plot_Current_Spectra(Int_t z,Int_t a,const char *OPTION,const 
         {
             // cout<<SpecName<<endl;
 
-            if(!Same){
+            if(!Same)
+            {
                 TCanvas *Ctest=new TCanvas("Current_Can","Current_Can",800,600);
                 Ctest->cd();
-                Current_Spectra->Draw();}
+                Current_Spectra->Draw();
+                if(Current_Second_Spectra!=0x0)
+                {
+                  Current_Second_Spectra->Draw("SAME");
+                  TLegend *leg=gPad->BuildLegend();
+                  leg->Draw();
+                }
+            }
             else{
                 gPad->cd();
                 Current_Spectra->Draw("SAME");
+                if(Current_Second_Spectra!=0x0)
+                {
+                  Current_Second_Spectra->Draw("SAME");
+                  TLegend *leg=gPad->BuildLegend();
+                  leg->Draw();
+                }
                 gPad->Modified();
                 gPad->Update();
             }
@@ -788,7 +823,7 @@ void Cube_Player::Plot_Current_Spectra(Int_t z,Int_t a,const char *OPTION,const 
                     if(PositionExp>=Max_PositionExp){Max_PositionExp=PositionExp;}
 
                 }
-               // if(!(E[k]<Min_Energy_Arrow || E[k]>Max_RangeUser))Cube->Draw_Arrow(Scale,Max_Position,E[k],0,z,a+A_Offset);
+                if(!(E[k]<Min_Energy_Arrow || E[k]>Max_RangeUser))Cube->Draw_Arrow(Scale,Max_Position,E[k],0,z,a+A_Offset);
 
                if(!(Eexp[k]<Min_Energy_Arrow || Eexp[k]>Max_RangeUser))Cube->Draw_Arrow(Scale,Max_PositionExp,Eexp[k],11,z,a+A_Offset);// 11 est l'indice pour la couleur Rose
 

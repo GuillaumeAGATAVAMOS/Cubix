@@ -27,9 +27,11 @@ namespace Gw {
 
         TDirectoryFile *fTree;
         TTree *fCurrentTree;
-        TH1F *ffOutputSpectra;
-        TH2F *f2OutputSpectra;
+        TH1F *ffOutputSpectra;//current spectra
+        TH1F *f_2OutputSpectra;//current second spectra to compare
+        TH2F *f2OutputSpectra;//Current matrix
         Float_t fGate_Width;
+        TObjArray *Array_Of_Spectra;
 
 
     protected:
@@ -56,6 +58,8 @@ namespace Gw {
 
 
         TH1F *Substract_Two_Spectra(TH1F* Old_Spectra,TH1F* Current_Spectra,Float_t Coef);
+
+        TObjArray *Search_Polluants(Int_t Zz,Int_t M,const char * ID_R,ULong64_t Max_Read_Entries);
 
         TH2F *Plot_PID_M(Int_t M_Current,const char *Gate,unsigned int Max_Entries);
 
