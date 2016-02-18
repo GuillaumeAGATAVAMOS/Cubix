@@ -164,5 +164,7 @@
 ./Root_Cube_cxx.so: /data/users/soft/root-v5-34-30/include/root/TDecompLU.h
 ./Root_Cube_cxx.so: /data/users/soft/root-v5-34-30/include/root/TDecompBase.h
 ./Root_Cube_cxx.so: /data/users/soft/root-v5-34-30/include/root/TDecompSVD.h
+./Root_Cube_cxx.so: /data/users/soft/root-v5-34-30/include/root/TImage.h
+./Root_Cube_cxx.so: /data/users/soft/root-v5-34-30/include/root/TAttImage.h
 ./Root_Cube_cxx.so: /data/users/soft/root-v5-34-30/include/root/cintdictversion.h /data/users/soft/root-v5-34-30/include/root/RVersion.h
 Root_Cube_cxx__ROOTBUILDVERSION= 5.34/30

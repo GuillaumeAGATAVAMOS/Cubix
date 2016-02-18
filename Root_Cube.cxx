@@ -1,10 +1,14 @@
 #include "includes_cube.h"
 #include "Cube_Player.h"
 #include "ENSDF_DATAe680.h"
+#include "TImage.h"
 
-void Plot_Chart()
+void Plot_Chart(Int_t Option)
 
 {
+
+TString ImagePath="Cubix.png";
+TImage* im = TImage::Open(ImagePath);
 
     Cube=new Cube_Player ("toto","tata");
     DATABASE=new ENSDF_DATAe680("toto2","tata");
@@ -40,6 +44,14 @@ void Plot_Chart()
         cout<<endl;
 
         C_Chart->Draw();
+
+        if(Option!=1)
+        {
+            TCanvas *C_Picture= new TCanvas("Cubix","Cubix",C_Chart->GetWindowTopX(),C_Chart->GetWindowTopY(),540,760);
+            C_Picture->cd();
+            C_Picture->SetBit(kNoContextMenu);
+            im->Draw("xyz");
+        }
 
         Cube->SetCanvas();
 

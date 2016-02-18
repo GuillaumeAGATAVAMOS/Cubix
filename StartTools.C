@@ -13,7 +13,7 @@ f->Add(SpectrumPlayer);
 
 browser->BrowseObject(f);
 
-if ( browser ) browser->Draw();
+//if ( browser ) browser->Draw();
 }
 
 //______________________________________________________________________________
