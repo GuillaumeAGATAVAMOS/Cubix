@@ -249,9 +249,14 @@ void Cube_Player::XEventAction(Int_t event, Int_t px, Int_t py, TObject */*sel*/
         InfoMessage("      S_P W+X/Y+Z -> W and X are Z_ID and M_ID for the fisrt Spectrum; Y and Z are Z_ID and M_ID for the second Spectrum");cout<<endl;
         InfoMessage("      Accepted forms : 'S_P 0.5+0.5/0.321+0.321'");
         InfoMessage("      Accepted forms : 'S_P 0.321+0.321'  -> The second parameters are taken from the default values of M_ID and Z_ID");
-        InfoMessage("      Default Values : 'Z_ID=M_ID=0.5'");
-
-
+        InfoMessage("      Default Values : 'Z_ID=M_ID=0.5'");cout<<endl;
+        cout<<endl;
+        ErrorMessage("      HELP ON OPTIONS TO USE AUTOMATIC BACKGROUND SUBSTRACTION");cout<<endl;
+        InfoMessage("      &S-> KeyWord to use background substraction");cout<<endl;
+        InfoMessage("      USE :");cout<<endl;
+        InfoMessage("      SM X+Y &S   ");cout<<endl;
+        InfoMessage("      &S is put at the end of the gate expression  ");cout<<endl;
+        WarningMessage("      Warnning! Work Only With the SM Mode");
 
     }
     if   (Key == kKey_r  && CTRL==false && LastCTRL==true)//CTRL+r

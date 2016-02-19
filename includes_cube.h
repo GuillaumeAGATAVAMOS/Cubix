@@ -81,6 +81,8 @@ Color_t Gamma_Arrow_Color[22]={kRed,kGreen,kBlue,kBlack,kMagenta,kCyan,kGray,kGr
 //"/agataDAS1/AGATA/Experiments/e680/Analysis/Users/Dudouet/Calibrations/PlotGlobResults/TimeCorr/AllManip_Final_Corr.root"
 
 
+TString RAW_SPECTRA_PER_M="/agataDAS1/AGATA/Experiments/e680/Analysis/Users/Gui/Calibrations/ROOT_CUBE/Raw_Spectra_Per_M/Raw_Per_M.root";
+
 TString Raw_Directory="/agataDAS1/AGATA/Experiments/e680/Analysis/Users/Gui/Level_Scheme/Import_ENSDF/";
 
 TString Tree_Directory="/agataDAS1/AGATA/Experiments/e680/Analysis/Data/AnalysedTrees/E680_PerIsotope_PerZ_PerM_NoSelection.root";

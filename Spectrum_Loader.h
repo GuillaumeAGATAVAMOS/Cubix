@@ -32,6 +32,9 @@ namespace Gw {
         TH2F *f2OutputSpectra;//Current matrix
         Float_t fGate_Width;
         TObjArray *Array_Of_Spectra;
+        TFile *fInputRawSpectra; //file of raw spectra for a given Mass
+        TH1F *fCurrentRawSpectra;// current raw spectra for a given mass
+        TH1F *fCurrent_Substracted_Spectra;
 
 
     protected:
@@ -64,6 +67,11 @@ namespace Gw {
         TH2F *Plot_PID_M(Int_t M_Current,const char *Gate,unsigned int Max_Entries);
 
 
+        Int_t Is_Special_BackSub_Mode(const char* Sub_Mode);
+
+        TH1F * Load_Or_Create_Raw_Spectra(Int_t M,Int_t SubMode,Int_t Max_Read_Entries);
+
+        TH1F * Create_SpectraWithout_BackGround(TH1F * Raw_Spectra,TH1F * Current_Spectra_to_Substract);
 
         ClassDef(Spectrum_Loader,1)
 

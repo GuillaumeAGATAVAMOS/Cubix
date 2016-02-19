@@ -88,32 +88,32 @@ Double_t *Get_Back_PID(const char*Gate)
 
     if(d->GetEntries()>1)
     {
-    TString SecondOption = d->At(1)->GetName();
+        TString SecondOption = d->At(1)->GetName();
 
-    delete d;
+        delete d;
 
-    Delimiter="+/-";
+        Delimiter="+/-";
 
-    TObjArray *dS = SecondOption.Tokenize(Delimiter);
+        TObjArray *dS = SecondOption.Tokenize(Delimiter);
 
 
-    if(dS->GetEntries()!=0)
-    {
+        if(dS->GetEntries()!=0)
+        {
 
-        TString ZPID =dS->At(0)->GetName();
+            TString ZPID =dS->At(0)->GetName();
 
-        TString ZPIDError =dS->At(1)->GetName();
+            TString ZPIDError =dS->At(1)->GetName();
 
-        PID[0]=atof(ZPID);
-        PID[1]=atof(ZPIDError);
+            PID[0]=atof(ZPID);
+            PID[1]=atof(ZPIDError);
 
-//        cout<<" PID "<<atof(ZPID)<<" error PID "<<ZPIDError<<endl;
+            //        cout<<" PID "<<atof(ZPID)<<" error PID "<<ZPIDError<<endl;
 
-    }
+        }
     }
     else
     {
-    PID[0]=50;PID[1]=100;
+        PID[0]=50;PID[1]=100;
     }
     //cout<<" PID "<<PID[0]<<" error PID "<<PID[1]<<endl;
 
@@ -185,7 +185,7 @@ Double_t *Get_Back_IDS_S_P(const char*Quality_Factor)
 
                 QF[k]=atof(d_Spectra_i->At(j)->GetName());
                 //cout<<"QF["<<k<<"]  "<<atof(d_Spectra_i->At(j)->GetName())<<endl;
-            k++;
+                k++;
             }
 
 
@@ -347,11 +347,37 @@ Int_t Spectrum_Loader::Which_Gate_Mode(const char*Gate)
     if((TString)True_Option=="S_S"){Gate_Mode=8;}//you want to sbstract the current spectra by another spectra // to complete
     if((TString)True_Option=="SA"){Gate_Mode=9;}//Simple gate just with AGATA
     if((TString)True_Option=="PIDM"){Gate_Mode=10;}//PID versus M Mode (Matrix mode)
-     if((TString)True_Option=="S_P"){Gate_Mode=11;}//Search polluant Mode
+    if((TString)True_Option=="S_P"){Gate_Mode=11;}//Search polluant Mode
+    if((TString)True_Option=="SMS"){Gate_Mode=12;}//Simple gated spectra with special background substraction
 
     //cout<<"Gate_Mode "<<Gate_Mode<<endl;
 
     return Gate_Mode;
+
+}
+
+
+Int_t Spectrum_Loader::Is_Special_BackSub_Mode(const char* Sub_Mode)
+{
+
+    Int_t SubMode=25;
+
+    TString Delimiter="&";
+    TString CompareOption=TString(Sub_Mode);
+
+    TObjArray *d = CompareOption.Tokenize(TString(Delimiter));
+
+    if(d->GetEntries()>1)
+    {
+        TObjString *T =(TObjString*)d->At(1);
+
+
+        const char *True_Option =(const char*)T->GetString();
+
+        if((TString)True_Option=="S"){SubMode=1;}//Simple gated with special background substraction
+    }
+
+    return SubMode;
 
 }
 
@@ -487,7 +513,7 @@ TH1F *Spectrum_Loader::Plot_Isotope_Gated(Int_t Zz,Int_t M,const char *ID_R,cons
     fCurrentTree->SetBranchAddress("MGamma", &MGamma);
     fCurrentTree->SetBranchAddress("EGamma", EGamma);
     fCurrentTree->SetBranchAddress("Z_ID", &Z_ID);
-        fCurrentTree->SetBranchAddress("M_ID", &M_ID);
+    fCurrentTree->SetBranchAddress("M_ID", &M_ID);
 
     //*********Set branch Adress of Tree********************
 
@@ -495,7 +521,7 @@ TH1F *Spectrum_Loader::Plot_Isotope_Gated(Int_t Zz,Int_t M,const char *ID_R,cons
 
     ULong64_t entries_in_tree = fCurrentTree->GetEntries(), c_in_tree = 0;
 
-     cout<<"\e[1;93m"<<"             ENTRIES IN TREE "<<entries_in_tree<<"\e[0m"<<endl;
+    cout<<"\e[1;93m"<<"             ENTRIES IN TREE "<<entries_in_tree<<"\e[0m"<<endl;
     cout<<endl;
 
     cout<<"\e[1;93m"<<"                      ProGress                        "<<"\e[0m"<<endl;
@@ -577,12 +603,12 @@ TH1F *Spectrum_Loader::Plot_Isotope_Gated(Int_t Zz,Int_t M,const char *ID_R,cons
 
 
 
-
-
-
-
 TH1F *Spectrum_Loader::Plot_Gated_Spectra(Int_t Zz,Int_t M,const char * ID_R,const char *Gate,Float_t Gate_W,ULong64_t Max_Read_Entries)
 {
+
+    Gw::Spectrum_Loader *gSpectra = new Gw::Spectrum_Loader("TOTO","TATA");
+
+    TH1F *Raw_Spectra=0x0;
 
     Double_t *QF = new Double_t[2];
     QF=Get_Back_IDS(ID_R);
@@ -598,7 +624,7 @@ TH1F *Spectrum_Loader::Plot_Gated_Spectra(Int_t Zz,Int_t M,const char * ID_R,con
     fCurrentTree = (TTree *)ISOtopes->Get(Tree_Name);
 
     Tree_Name+="_Gate_";Tree_Name+=Gate;
-    Tree_Name+=" M_ID =";Tree_Name+=QF[0];
+    Tree_Name+=Form(" M_ID = %4.2f",QF[0]);
 
     ffOutputSpectra = new TH1F(Tree_Name,Tree_Name,2000,0,2000);
 
@@ -619,7 +645,7 @@ TH1F *Spectrum_Loader::Plot_Gated_Spectra(Int_t Zz,Int_t M,const char * ID_R,con
 
     ULong64_t entries_in_tree = fCurrentTree->GetEntries(), c_in_tree = 0;
 
-     cout<<"\e[1;93m"<<"             ENTRIES IN TREE "<<entries_in_tree<<"\e[0m"<<endl;
+    cout<<"\e[1;93m"<<"             ENTRIES IN TREE "<<entries_in_tree<<"\e[0m"<<endl;
     cout<<endl;
 
     cout<<"\e[1;93m"<<"                      ProGress                        "<<"\e[0m"<<endl;
@@ -694,9 +720,22 @@ TH1F *Spectrum_Loader::Plot_Gated_Spectra(Int_t Zz,Int_t M,const char * ID_R,con
     //*****************************************END SIMPLE GATED SPECTRA******************************************
 
 
-    cout<<endl;
-    return ffOutputSpectra;
 
+
+    Int_t SubMode = Is_Special_BackSub_Mode(Gate);
+
+    if(SubMode==1)
+    {
+        Raw_Spectra=(TH1F*)gSpectra->Load_Or_Create_Raw_Spectra(M,SubMode,Max_Read_Entries);
+
+        return gSpectra->Create_SpectraWithout_BackGround(Raw_Spectra,ffOutputSpectra);
+    }
+    else
+    {
+        return ffOutputSpectra;
+    }
+
+    cout<<endl;
 }
 
 
@@ -894,7 +933,7 @@ TH2F *Spectrum_Loader::Plot_E_Z(Int_t Zz,Int_t M,const char * ID_R,Float_t Z_Min
 
     ULong64_t entries_in_tree = fCurrentTree->GetEntries(), c_in_tree = 0;
 
-     cout<<"\e[1;93m"<<"             ENTRIES IN TREE "<<entries_in_tree<<"\e[0m"<<endl;
+    cout<<"\e[1;93m"<<"             ENTRIES IN TREE "<<entries_in_tree<<"\e[0m"<<endl;
     cout<<endl;
 
     cout<<"\e[1;93m"<<"                      ProGress                        "<<"\e[0m"<<endl;
@@ -927,7 +966,7 @@ TH2F *Spectrum_Loader::Plot_E_Z(Int_t Zz,Int_t M,const char * ID_R,Float_t Z_Min
 
         }
 
-            c_in_tree++;
+        c_in_tree++;
     }
     cout<<endl;
     f2OutputSpectra->SetName(Form("ISOBARES %d",M));
@@ -1008,7 +1047,7 @@ TH2F *Spectrum_Loader::Plot_E_M(Int_t Zz,Int_t M,const char * ID_R,Float_t M_Min
             if(c_in_tree>Max_Read_Entries)break;
 
         }
-            c_in_tree++;
+        c_in_tree++;
 
     }
     cout<<endl;
@@ -1064,7 +1103,7 @@ TH1F *Spectrum_Loader::Plot_B_M(Int_t Zz,Int_t M,const char * PID,ULong64_t Max_
 
     ULong64_t entries_in_tree = fCurrentTree->GetEntries(), c_in_tree = 0;
 
-     cout<<"\e[1;93m"<<"             ENTRIES IN TREE "<<entries_in_tree<<"\e[0m"<<endl;
+    cout<<"\e[1;93m"<<"             ENTRIES IN TREE "<<entries_in_tree<<"\e[0m"<<endl;
     cout<<endl;
 
     cout<<"\e[1;93m"<<"                      ProGress                        "<<"\e[0m"<<endl;
@@ -1096,18 +1135,20 @@ TH1F *Spectrum_Loader::Plot_B_M(Int_t Zz,Int_t M,const char * PID,ULong64_t Max_
 
         }
 
-            c_in_tree++;
+        c_in_tree++;
     }
 
     cout<<endl;
 
-            //cout<<" PID "<<PIDIn[0]<<" error PID "<<PIDIn[1]<<endl;
-    ffOutputSpectra->SetName(Form("Raw Spectra For Mass = %d, PID = %i +/- %0.01f",M,PIDIn[0],PIDIn[1]));
-    ffOutputSpectra->SetTitle(Form("Raw Spectra For Mass = %d, PID = %i +/- %0.01f",M,PIDIn[0],PIDIn[1]));
+    //cout<<" PID "<<PIDIn[0]<<" error PID "<<PIDIn[1]<<endl;
+    ffOutputSpectra->SetName(Form("Raw Spectra For Mass = %d, PID = %4.2f +/- %0.01f",M,PIDIn[0],PIDIn[1]));
+    ffOutputSpectra->SetTitle(Form("Raw Spectra For Mass = %d, PID = %4.2f +/- %0.01f",M,PIDIn[0],PIDIn[1]));
 
     //delete PIDIn;
 
+
     return ffOutputSpectra;
+   // fTree->Close();
 
 }
 
@@ -1144,7 +1185,7 @@ TH1F *Spectrum_Loader::Plot_All_Gated_Spectra(const char *Gate,Float_t Gate_W,UL
 
     ULong64_t entries_in_tree = fCurrentTree->GetEntries(), c_in_tree = 0;
 
-     cout<<"\e[1;93m"<<"             ENTRIES IN TREE "<<entries_in_tree<<"\e[0m"<<endl;
+    cout<<"\e[1;93m"<<"             ENTRIES IN TREE "<<entries_in_tree<<"\e[0m"<<endl;
     cout<<endl;
 
     cout<<"\e[1;93m"<<"                      ProGress                        "<<"\e[0m"<<endl;
@@ -1176,43 +1217,43 @@ TH1F *Spectrum_Loader::Plot_All_Gated_Spectra(const char *Gate,Float_t Gate_W,UL
             fCurrentTree->GetEntry(c_in_tree);
 
 
-                //**************************One Gate Case*******************************
+            //**************************One Gate Case*******************************
 
-                Int_t i, nb_in, Flag[200];
+            Int_t i, nb_in, Flag[200];
 
-                nb_in = 0;
+            nb_in = 0;
+            for (i = 0; i < MGamma; i++ )
+            { // count how many gammas in the gate g1
+
+                Flag[i] = 0;
+                for(Int_t j=0;j<(Int_t)g1.size();j++)
+                {
+                    if ( EGamma[i] >= g1.at(j)-fGate_Width &&  EGamma[i]<= g1.at(j)+fGate_Width ) { nb_in++; Flag[i] = 1; }
+                }
+
+            }
+            // i
+            if ( nb_in == 0 ){c_in_tree++;continue;}// no gammas in the gate
+            if ( nb_in == 1 )
+            { 	// keep only gammas outside the gate
                 for (i = 0; i < MGamma; i++ )
-                { // count how many gammas in the gate g1
+                {
+                    if ( Flag[i] == 0 ) ffOutputSpectra->Fill(EGamma[i]);
+                } // i
+            }
+            else
+            {			// keep all gammas
+                for (i = 0; i < MGamma; i++ )
+                {
+                    ffOutputSpectra->Fill(EGamma[i]);
+                } // i
+            }
 
-                    Flag[i] = 0;
-                    for(Int_t j=0;j<(Int_t)g1.size();j++)
-                    {
-                        if ( EGamma[i] >= g1.at(j)-fGate_Width &&  EGamma[i]<= g1.at(j)+fGate_Width ) { nb_in++; Flag[i] = 1; }
-                    }
-
-                }
-                // i
-                if ( nb_in == 0 ){c_in_tree++;continue;}// no gammas in the gate
-                if ( nb_in == 1 )
-                { 	// keep only gammas outside the gate
-                    for (i = 0; i < MGamma; i++ )
-                    {
-                        if ( Flag[i] == 0 ) ffOutputSpectra->Fill(EGamma[i]);
-                    } // i
-                }
-                else
-                {			// keep all gammas
-                    for (i = 0; i < MGamma; i++ )
-                    {
-                        ffOutputSpectra->Fill(EGamma[i]);
-                    } // i
-                }
-
-                //***************End One Gate Case*****************************************
+            //***************End One Gate Case*****************************************
 
 
-                c_in_tree++;
-                if(c_in_tree>Max_Read_Entries)break;
+            c_in_tree++;
+            if(c_in_tree>Max_Read_Entries)break;
 
         }
 
@@ -1238,9 +1279,9 @@ TH1F *Spectrum_Loader::Substract_Two_Spectra(TH1F* Old_Spectra,TH1F* Current_Spe
     for(Int_t i=0;i<Old_Spectra->GetNbinsX();i++)
     {
 
-    ynew=Old_Spectra->GetBinContent(i)+Coef*Current_Spectra->GetBinContent(i);
+        ynew=Old_Spectra->GetBinContent(i)+Coef*Current_Spectra->GetBinContent(i);
 
-    New_Return_Spectra->Fill(i,ynew);
+        New_Return_Spectra->Fill(i,ynew);
 
     }
     return New_Return_Spectra;
@@ -1251,69 +1292,69 @@ TH2F *Spectrum_Loader::Plot_PID_M(Int_t M_Current,const char *Gate,unsigned int 
 
 {
 
-        TString Tree_Name= Form("%d",M_Current);
+    TString Tree_Name= Form("%d",M_Current);
 
-        fTree=TFile::Open(Tree_Directory);
+    fTree=TFile::Open(Tree_Directory);
 
-        TDirectoryFile *ISOtopes =(TDirectoryFile *)fTree->Get("TreePerM");
+    TDirectoryFile *ISOtopes =(TDirectoryFile *)fTree->Get("TreePerM");
 
-        fCurrentTree = (TTree *)ISOtopes->Get(Tree_Name);
+    fCurrentTree = (TTree *)ISOtopes->Get(Tree_Name);
 
-        Tree_Name+=" PID vs M =";Tree_Name+=M_Current;
+    Tree_Name+=" PID vs M =";Tree_Name+=M_Current;
 
-        f2OutputSpectra = new TH2F(Tree_Name,Tree_Name,200,M_Current-0.5,M_Current+0.5,400,25,45);
+    f2OutputSpectra = new TH2F(Tree_Name,Tree_Name,200,M_Current-0.5,M_Current+0.5,400,25,45);
 
-        //*********Set branch Adress of Tree********************
+    //*********Set branch Adress of Tree********************
 
-        Float_t PIDTree=0;
-        Float_t M=0;
+    Float_t PIDTree=0;
+    Float_t M=0;
 
-        fCurrentTree->SetBranchAddress("PID", &PIDTree);
-        fCurrentTree->SetBranchAddress("M", &M);
-
-
-        //*********END Set branch Adress of Tree********************
+    fCurrentTree->SetBranchAddress("PID", &PIDTree);
+    fCurrentTree->SetBranchAddress("M", &M);
 
 
-
-        ULong64_t entries_in_tree = fCurrentTree->GetEntries(), c_in_tree = 0;
-
-         cout<<"\e[1;93m"<<"             ENTRIES IN TREE "<<entries_in_tree<<"\e[0m"<<endl;
-        cout<<endl;
-
-        cout<<"\e[1;93m"<<"                      ProGress                        "<<"\e[0m"<<endl;
-        cout<<endl;
-        cout <<"\e[1;93m"<< "0%   10   20   30   40   50   60   70   80   90 100%"<<"\e[0m"<<endl;
-        cout <<"\e[1;93m"<< "|----|----|----|----|----|----|----|----|----|----| "<<"\e[0m"<<endl;
+    //*********END Set branch Adress of Tree********************
 
 
 
-        while ( c_in_tree < entries_in_tree )
+    ULong64_t entries_in_tree = fCurrentTree->GetEntries(), c_in_tree = 0;
+
+    cout<<"\e[1;93m"<<"             ENTRIES IN TREE "<<entries_in_tree<<"\e[0m"<<endl;
+    cout<<endl;
+
+    cout<<"\e[1;93m"<<"                      ProGress                        "<<"\e[0m"<<endl;
+    cout<<endl;
+    cout <<"\e[1;93m"<< "0%   10   20   30   40   50   60   70   80   90 100%"<<"\e[0m"<<endl;
+    cout <<"\e[1;93m"<< "|----|----|----|----|----|----|----|----|----|----| "<<"\e[0m"<<endl;
+
+
+
+    while ( c_in_tree < entries_in_tree )
+    {
+
+        if(c_in_tree%(Int_t)(entries_in_tree/50.)==0)
         {
-
-            if(c_in_tree%(Int_t)(entries_in_tree/50.)==0)
-            {
-                cout <<"\e[1;93m"<< "*" <<"\e[0m"<<flush;
-            }
-
-            fCurrentTree->GetEntry(c_in_tree);
-
-
-                    f2OutputSpectra->Fill(M,PIDTree);
-
-                if(c_in_tree>Max_Entries)break;
-
-
-                c_in_tree++;
+            cout <<"\e[1;93m"<< "*" <<"\e[0m"<<flush;
         }
 
-        cout<<endl;
-
-        f2OutputSpectra->SetName(Form("PID versus M=%d",M_Current));
-        f2OutputSpectra->SetTitle(Form("PID versus M=%d",M_Current));
+        fCurrentTree->GetEntry(c_in_tree);
 
 
-        return f2OutputSpectra;
+        f2OutputSpectra->Fill(M,PIDTree);
+
+        if(c_in_tree>Max_Entries)break;
+
+
+        c_in_tree++;
+    }
+
+    cout<<endl;
+
+    f2OutputSpectra->SetName(Form("PID versus M=%d",M_Current));
+    f2OutputSpectra->SetTitle(Form("PID versus M=%d",M_Current));
+
+
+    return f2OutputSpectra;
 
 
 
@@ -1337,9 +1378,9 @@ TObjArray *Spectrum_Loader::Search_Polluants(Int_t Zz,Int_t M,const char * ID_R,
     Double_t *QF = new Double_t[4];
     QF=Get_Back_IDS_S_P(ID_R);
 
-//    cout<<" QF 0 "<<QF[0]<<" QF 1 "<<QF[1]<<endl;
+    //    cout<<" QF 0 "<<QF[0]<<" QF 1 "<<QF[1]<<endl;
 
-//    cout<<" QF 2 "<<QF[2]<<" QF 3 "<<QF[3]<<endl;
+    //    cout<<" QF 2 "<<QF[2]<<" QF 3 "<<QF[3]<<endl;
 
 
     TString Tree_Name="";Tree_Name+=M;Tree_Name+=S_z;Tree_Name+="_Z_";Tree_Name+=Zz;Tree_Name+="_A";Tree_Name+=M;
@@ -1442,6 +1483,173 @@ TObjArray *Spectrum_Loader::Search_Polluants(Int_t Zz,Int_t M,const char * ID_R,
 
     return Array_Of_Spectra;
     cout<<endl;
+}
+
+
+
+TH1F * Spectrum_Loader::Load_Or_Create_Raw_Spectra(Int_t M,Int_t SubMode,Int_t Max_Read_Entries)
+{
+
+    Gw::Spectrum_Loader *gLoad_Or_Create = new Gw::Spectrum_Loader("TOTO","TATA");
+
+    fCurrentRawSpectra=new TH1F(Form("%d",M),Form("%d",M),2000,0,2000);
+
+    if(SubMode==1)//means you want a special backgroud substraction
+
+    {
+
+        if(!gSystem->IsFileInIncludePath(RAW_SPECTRA_PER_M))
+        {
+
+            ErrorMessage("*********************************************************");
+            ErrorMessage("******ROOT File for raw spectra is not in include PATH***");
+            ErrorMessage("**********************************************************");
+        }
+        else
+        {
+
+
+            TFile *FileOut = new TFile(RAW_SPECTRA_PER_M,"UPDATE");
+            FileOut->cd();
+
+
+            TDirectoryFile *Current_MassFile =(TDirectoryFile *)FileOut->Get(Form("M=%d",M));
+
+            if(Current_MassFile!=0x0)
+            {
+
+                Double_t PIDIn[2]={50,100};
+
+
+                TFile *FileIn= new TFile(RAW_SPECTRA_PER_M,"OPEN");
+                TString FolderName = Form("M=%d",M);
+                FileIn->cd();
+                FileIn->cd(FolderName);
+
+
+                fCurrentRawSpectra=(TH1F*)FileIn->FindObjectAny(Form("M%d",M));
+
+                if(fCurrentRawSpectra==0x0)
+                {
+
+                    ErrorMessage("**********************************************************");
+                    ErrorMessage("*******Spectra For this mass is not correctly Loaded******");
+                    ErrorMessage("**********************************************************");
+                }
+
+
+            }
+            else// means you need to create the folder and call B_M Function
+            {
+
+                cout<<endl;
+                cout<<endl;
+                WarningMessage("**********************************************************");
+                WarningMessage("******CREATING NEW RAW SPECTRA FOR THE CURRENT MASS*******");
+                WarningMessage("*****IT WILL BE SAVED FOR OTHER BACKGROUND SUBSTRACTION***");
+                WarningMessage("**********************************************************");
+                cout<<endl;cout<<endl;cout<<endl;
+
+                fCurrentRawSpectra=(TH1F *)gLoad_Or_Create->Plot_B_M(35,M,"B_M",1000000);
+
+                fCurrentRawSpectra->SetName(Form("M%d",M));
+                FileOut->cd();
+
+                TString FolderName = Form("M=%d",M);
+
+                FileOut->mkdir(FolderName);
+
+                FileOut->cd(FolderName);
+
+                fCurrentRawSpectra->Write();
+
+
+            }
+
+          FileOut->Close();
+
+        }
+
+
+        return fCurrentRawSpectra;
+
+
+    }//end sub mode =1
+    else{return 0x0;}
+
+
+}
+
+
+TH1F * Spectrum_Loader::Create_SpectraWithout_BackGround(TH1F * Raw_Spectra,TH1F * Current_Spectra_to_Substract)
+{
+
+    TH1F * New_Return_Spectra= new TH1F(Current_Spectra_to_Substract->GetName(),Current_Spectra_to_Substract->GetName(),2000,0,2000);
+
+    Double_t ynew;
+    Double_t Pourcentage_Negatif=0.01;
+    Int_t Max_Iter=100;
+
+    //Dichotomie initialisations
+    Double_t c=0;
+    Double_t a=0;
+    Double_t b=Current_Spectra_to_Substract->Integral()/Raw_Spectra->Integral();
+    Double_t Positive_Integral=0,Positive_Integral_a=0,Positive_Integral_b=0;
+    Double_t Negative_Integral=0,Negative_Integral_a=0,Negative_Integral_b=0;
+    Double_t Aire_Relative=0;
+    Double_t fa=0,ya=0;
+    Double_t fb=0,yb=0;
+    Double_t fc=0;
+
+    cout<<endl;
+
+    Int_t i =0;
+
+    for( i=0;i<Max_Iter;i++)
+    {
+        c=(a+b)/2;
+
+        Positive_Integral=Negative_Integral=0;
+        Positive_Integral_a=Negative_Integral_a=0;
+        Positive_Integral_b=Negative_Integral_b=0;
+
+        for(Int_t i=0;i<Current_Spectra_to_Substract->GetNbinsX();i++)
+        {
+
+            ynew=Current_Spectra_to_Substract->GetBinContent(i)-c*Raw_Spectra->GetBinContent(i);
+
+            ya=Current_Spectra_to_Substract->GetBinContent(i)-a*Raw_Spectra->GetBinContent(i);
+            yb=Current_Spectra_to_Substract->GetBinContent(i)-b*Raw_Spectra->GetBinContent(i);
+
+            if(ynew>0)Positive_Integral+=ynew;
+            if(ynew<0)Negative_Integral+=ynew;
+            if(ya>0)Positive_Integral_a+=ya;
+            if(ya<0)Negative_Integral_a+=ya;
+            if(yb>0)Positive_Integral_b+=yb;
+            if(yb<0)Negative_Integral_b+=yb;
+
+            New_Return_Spectra->Fill(i,ynew);
+        }
+
+        fa=Pourcentage_Negatif*Positive_Integral_a+(Negative_Integral_a);
+        fb=Pourcentage_Negatif*Positive_Integral_b+(Negative_Integral_b);
+        fc=Pourcentage_Negatif*Positive_Integral+(Negative_Integral);
+
+        if(fa>0 && fc>0){a=c;}
+        if(fa<0 && fc<0){a=c;}
+        if(fb>0 && fc>0){b=c;}
+        if(fb<0 && fc<0){b=c;}
+
+        Aire_Relative=-(Negative_Integral/Positive_Integral);
+
+        if(Aire_Relative<(Pourcentage_Negatif+0.01*Pourcentage_Negatif) && Aire_Relative>(Pourcentage_Negatif-0.01*Pourcentage_Negatif))break;
+
+    }
+    cout<<"ITERATIONS "<<i<<endl;
+    cout<<"Aire_Relative "<<Aire_Relative<<endl;
+
+    return New_Return_Spectra;
+
 }
 
 

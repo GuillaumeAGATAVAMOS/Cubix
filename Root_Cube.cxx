@@ -7,8 +7,7 @@ void Plot_Chart(Int_t Option)
 
 {
 
-TString ImagePath="Cubix.png";
-TImage* im = TImage::Open(ImagePath);
+
 
     Cube=new Cube_Player ("toto","tata");
     DATABASE=new ENSDF_DATAe680("toto2","tata");
@@ -47,6 +46,8 @@ TImage* im = TImage::Open(ImagePath);
 
         if(Option!=1)
         {
+            TString ImagePath="Cubix.png";
+            TImage* im = TImage::Open(ImagePath);
             TCanvas *C_Picture= new TCanvas("Cubix","Cubix",C_Chart->GetWindowTopX(),C_Chart->GetWindowTopY(),540,760);
             C_Picture->cd();
             C_Picture->SetBit(kNoContextMenu);
